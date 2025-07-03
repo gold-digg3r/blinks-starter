@@ -6,7 +6,6 @@ import "@dialectlabs/blinks/index.css";
 
 import { StepCard } from "./components/step-card";
 
-// Text for the steps on the left side of the page for the user to follow
 const steps = [
   {
     icon: "icon-cog",
@@ -29,18 +28,20 @@ const steps = [
 ];
 
 export default function Home() {
-  const blinkApiUrl = "http://localhost:3000/api/actions/donate-sol";
+  const blinkApiUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/api/actions/donate-sol`
+      : "http://localhost:3000/api/actions/donate-sol";
 
-  // Adapter, used to connect to the wallet
   const { adapter } = useBlinkSolanaWalletAdapter(
     "https://api.devnet.solana.com"
   );
 
-  // Blink we want to execute
-  const { blink, isLoading } = useBlink({ url: blinkApiUrl });
+  const { blink, isLoading, error } = useBlink({ url: blinkApiUrl });
 
   return (
     <main className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] min-h-[calc(100vh-64px)]">
+      {/* LEFT SIDE: Steps */}
       <div className="col-span-1 p-4 lg:p-8 lg:pr-16 lg:overflow-y-auto">
         <h1 className="text-[32px] lg:text-[40px] mb-3 font-bold leading-[1]">
           Solana Blinks Starter Template
@@ -58,11 +59,16 @@ export default function Home() {
         ))}
       </div>
 
-      <div className="flex items-center justify-center lg:border lg:border-gray-600 rounded-[10px] m-4">
-        {isLoading || !blink ? (
-          <span>Loading</span>
+      {/* RIGHT SIDE: Blink Renderer */}
+      <div className="flex items-center justify-center lg:border lg:border-gray-600 rounded-[10px] m-4 p-6">
+        {!adapter ? (
+          <span className="text-gray-400">Wallet adapter not available</span>
+        ) : error ? (
+          <span className="text-red-500">Failed to load blink: {error.message}</span>
+        ) : isLoading || !blink ? (
+          <span className="text-gray-400">Loading blink...</span>
         ) : (
-          <div className="w-full max-w-lg">
+          <div className="w-full max-w-lg p-6 rounded-xl border border-gray-700 shadow-lg">
             <Blink
               blink={blink}
               adapter={adapter}

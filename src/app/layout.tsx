@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
+import "./globals.css";
 
 import { Navbar } from "@/app/components/navbar";
-
-// Providers are used to wrap the app in Wagmi and ConnectKit
 import AppWalletProvider from "@/app/components/AppWalletProvider";
-import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Blinks Scaffold Solana",
@@ -19,10 +17,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <head />
+      <body className="bg-black text-white min-h-screen font-sans antialiased">
         <AppWalletProvider>
           <Navbar />
-          {children}
+          <main className="container mx-auto px-4 py-6">{children}</main>
         </AppWalletProvider>
       </body>
     </html>
